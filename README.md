@@ -6,23 +6,25 @@ This test has been designed to prove your knowledge of Python, Django and Docker
 
 In this project you can list and enter a series of videos, you have been asked to add the following features:
 
-- Create the URL "/popular/" to show the five most popular videos, based on the following rules:
+1. Create the URL "/popular/" to show the five most popular videos, based on the following rules:
  - Likes add 10 points of popularity
  - Dislikes subtract 5 points of popularity
  - Comments add 1 point of popularity
- - Today videos are 100 points of popularity worth than yesterday's videos
+ - Today videos are 100 points of popularity worth than yesterday's videos and so on (e.g. tomorrow video will have 100 more than today's video)
  - In case that all videos have the same popularity points, choose five videos at random.
  - include only the videos of the current month. If there aren't any new videos, pick five videos at random.
  - This website is on fast-growing, think on a scalable solution
+ - example:
+    1. Today video with 2 likes and 1 dislike, and 1 comments -> 116
+    2. Yesterday video with 2 likes and 1 dislike, and 1 comments -> 16
 
-example:
-  Today video with 2 likes and 1 dislike, and 1 comments -> 116
-  Yesterday video with 2 likes and 1 dislike, and 1 comments -> 16
+2. Create the URL "/history/" to show the videos that the logged user has seen, ordered from new to old, paginated by 10.
 
-- Create the URL "/history/" to show the videos that the logged user has seen, ordered from new to old, paginated by 10.
-- Build the test you consider necessary to test /popular/ and /history/
+3. Build the test you consider necessary to test /popular/ and /history/
 
-You are also being asked to fix any issues that you find on any files of this project (we deliberately added quite a few)
+4. You are also being asked to fix any issues(e.g bugs,typos,logic errors, etc) that you may find on any files of this project (we deliberately added quite a few).
+
+We included some initial data so you can work on it.
 
 # Clarifications
 
