@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, View
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
-
+from .decorators import ajax_login_required
 
 from .models import Video, Comment
 
@@ -46,6 +46,7 @@ class VideoDetailView(DetailView):
         
         return super().render_to_response(context, **response_kwargs)
 
+@login_required
 @require_http_methods(["POST"])
 def comment_video(request, youtube_id):
     logger.info("comment a video: %s", youtube_id)
@@ -62,8 +63,7 @@ def comment_video(request, youtube_id):
 
     return redirect(reverse_lazy("videos:detail", kwargs={"slug": x.slug}))
 
-
-
+@ajax_login_required
 @require_http_methods(["POST"])
 def like_video(request, youtube_id):
     logger.info("like to video: %s", youtube_id)
@@ -84,7 +84,7 @@ def like_video(request, youtube_id):
 
     return JsonResponse(data)
 
-
+@login_required
 @require_http_methods(["POST"])
 def dislike_video(request, youtube_id):
     logger.info("disliked to video: %s", youtube_id)
