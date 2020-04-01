@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import render, redirect
 from django.db.models import Count
 from django.urls import reverse_lazy
@@ -10,6 +11,8 @@ from django.core import serializers
 
 
 from .models import Video, Comment
+
+logger = logging.getLogger("videos")
 
 class VideoListView(ListView):
     model=Video
@@ -45,7 +48,7 @@ class VideoDetailView(DetailView):
 
 @require_http_methods(["POST"])
 def comment_video(request, youtube_id):
-    print("dislike a video")
+    logger.info("comment a video: %s", youtube_id)
     user_logged=request.user
     x=Video.objects.get(youtube_id=youtube_id)
     
@@ -63,10 +66,10 @@ def comment_video(request, youtube_id):
 
 @require_http_methods(["POST"])
 def like_video(request, youtube_id):
-    print("dislike a video")
+    logger.info("like to video: %s", youtube_id)
     user_logged=request.user
 
-    video=Video.objects.filter(youtube_id=youtube_id).first()
+    video = Video.objects.filter(youtube_id=youtube_id).first()
 
     if not video:
         return JsonResponse({'error': 'invalid video id'}, status=400)
@@ -84,7 +87,7 @@ def like_video(request, youtube_id):
 
 @require_http_methods(["POST"])
 def dislike_video(request, youtube_id):
-    print("dislike a video")
+    logger.info("disliked to video: %s", youtube_id)
     user_logged=request.user
 
     video=Video.objects.filter(youtube_id=youtube_id, active=True)[0]
