@@ -10,7 +10,7 @@
                     <div class="card-body">
                     <h5 class="card-title">{{video.title}}</h5>
                     <p class="card-text">By: {{video.author}}</p>
-                    <a href="/video/{{video.slug}}/" class="btn btn-primary">Ver</a>
+                    <a href="{% url "videos:detail" video.slug %}" class="btn btn-primary">Ver</a>
                     </div>
                 </div>
             {% endfor %}
