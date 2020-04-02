@@ -20,11 +20,11 @@
         </div>
 
         <div class="col-sm-8 offset-sm-2 mt-3">
-            <a class="like">
+            <a class="like" href="{% url "profiles:login" %}">
                 <span>{{likes.likes_count}}</span>
                 <i class="far fa-thumbs-up"></i>
             </a>
-            <a class="dislike">
+            <a class="dislike" href="{% url "profiles:login" %}">
                 <span>{{likes.dislikes_count}}</span>
                 <i class="far fa-thumbs-down"></i>
             </a>
@@ -33,7 +33,7 @@
 
     <div class="row mt-5">
         <div class="col-sm-8 offset-sm-2">
-            <form action="{% url 'videos:comment_video' object.youtube_id %}" method="POST" id="comment_video">
+            <form action="{% url 'videos:comment_video' object.youtube_id %}#comments" method="POST" id="comment_video">
                 {% csrf_token %}
                 <textarea 
                     name="comment" 
@@ -49,7 +49,7 @@
             </form>
         </div>
     </div>
-    
+    <a name="comments"></a>
     <div class="row mt-5">
         <div class="col-sm-8 offset-sm-2">
             <h3>Comments: </h3>
@@ -68,6 +68,8 @@
 
 
 {% block scripts %}
+
+{% if user.is_authenticated %}
 
 <script>
     function getCookie(name) {
@@ -97,20 +99,41 @@
             }
         }
     });
-    $('.like').click(() => {
+    $('.like').click((el) => {
         console.log('like')
+        // actualizar la UI optimisticamente
+        var el = $(el.currentTarget).find("span")
+        el.html(parseInt(el.html())+1)
+
         $.post("{% url "videos:likes_video" object.youtube_id %}", {}, function(result) {
             console.log(result)
+            if (result.error) {
+                // devolver la UI al estado original
+               el.html(parseInt(el.html()-1))
+            }
         })
+
+        return false
     })
 
-    $('.dislike').click(() => {
+    $('.dislike').click((el) => {
         console.log('dislike')
+         // actualizar la UI optimisticamente 
+        var el = $(el.currentTarget).find("span")
+        el.html(parseInt(el.html())+1)
+
         $.post("{% url "videos:dislikes_video" object.youtube_id %}", {}, function(result) {
             console.log(result)
+            if (result.error) {
+                // devolver la UI al estado original
+                el.html(parseInt(el.html()-1))
+            }
         })
+
+        return false
     })
 
 </script>
+{% endif %}
 
 {% endblock scripts %}

@@ -9,6 +9,8 @@ def ajax_login_required(view_func):
         if request.is_ajax():
             if not request.user.is_authenticated:
                 return JsonResponse({'error': "Unauthenticated"}, status=401)
+            else:
+                return view_func(request, *args, **kwargs)
         else:
             if request.user.is_authenticated:
                 return view_func(request, *args, **kwargs)

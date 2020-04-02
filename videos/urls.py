@@ -7,9 +7,19 @@ urlpatterns = [
         route='',
         view=views.VideoListView.as_view(),
         name='list'),
+    
+    path(
+        route='popular/',
+        view=views.PopularListView.as_view(),
+        name='popular'),
 
     path(
-        route='<slug:slug>/',
+        route='history/',
+        view=views.HistoryListView.as_view(),
+        name='history'),
+
+    path(
+        route='<str:slug>/',
         view=views.VideoDetailView.as_view(),
         name='detail'),
 

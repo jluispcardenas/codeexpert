@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django.test import TestCase
 from django.utils.text import slugify
 from django.contrib.auth.models import User
@@ -5,7 +7,7 @@ from django.urls import reverse
 
 from faker import Factory
 
-from .models import Video
+from .models import Video, Popularity
 
 # Create your tests here.
 
@@ -110,8 +112,37 @@ class VideoTests(TestCase):
             kwargs={'youtube_id': random_youtube_id}))
         self.assertEqual(resp.status_code, 400)
 
+    def test_popular(self):
+        login = self.client.login(username='test_user_2', password='123456')
+
+        videos = Video.objects.all()[:5]
+
+        popular = Popularity.objects.create(video_id=videos[0].id,created=date.today(),points=400)
+        popular.save()
+
+        popular2 = Popularity.objects.create(video_id=videos[1].id,created=date.today(),points=300)
+        popular2.save()
+
+        resp = self.client.get(reverse('videos:popular'))
+        self.assertEqual(resp.status_code, 200)
+
+        self.assertTrue(resp.context['object_list'][0].id == videos[0].id)
     
 
+    def test_history(self):
+        login = self.client.login(username='test_user_2', password='123456')
+
+        video = Video.objects.all()[5]
+        
+        resp = self.client.get(reverse(
+            'videos:detail', 
+            kwargs={'slug': video.slug}))
+        self.assertEqual(resp.status_code, 200)
+    
+        resp = self.client.get(reverse('videos:history'))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.context['object_list'].first().video_id == video.id)
+    
 
 
 

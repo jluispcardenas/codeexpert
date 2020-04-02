@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+    <div class="row mt-5">
+        <div class="col col-sm-8 offset-sm-2">
+            <h1 class="text-center">History</h1>
+            {% for el in object_list %}
+                <div class="card w-100 mt-4">
+                    <div class="card-body">
+                    <h5 class="card-title">{{el.video.title}}</h5>
+                    <p class="card-text">By: {{el.video.author}}</p>
+                    <a href="{% url "videos:detail" el.video.slug %}" class="btn btn-primary">Ver</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if is_paginated %}
+            <nav aria-label="Page navigation" class="mt-5 col-md-12">
+              <ul class="pagination list-inline mx-auto justify-content-center">
+                      {% if page_obj.has_previous %}
+                      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+                      {% endif %}
+                      <li class="page-item"> &nbsp; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} &nbsp; </li>
+                      {% if page_obj.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a class="page-link"></li>
+                      {% endif %}
+              </ul>
+            </nav>
+    {% endif %}
+    </div>
+
+{% endblock container %}

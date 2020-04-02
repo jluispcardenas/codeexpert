@@ -27,6 +27,11 @@ class Video(models.Model):
         User, 
         related_name='dislike_videos'
     )
+    
+    history = models.ManyToManyField(
+        User,
+        related_name='history_videos'
+    )
 
     comments = models.ManyToManyField(
         User, 
@@ -49,3 +54,12 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+class Popularity(models.Model):
+  
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    points = models.IntegerField(default=0)
+    created = models.DateField(null=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+  
