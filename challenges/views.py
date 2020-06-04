@@ -162,7 +162,7 @@ def submit_answer(request):
                 response = json.loads(result)
                 valid = response and "errorType" not in response
                 status = "Success" if response and 'errorType' not in response else response['errorType'] 
-                
+               
                 updateAnswer(challenge, valid, request.user, code, status)
   
                 return JsonResponse(response)
