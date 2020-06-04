@@ -147,6 +147,9 @@ def submit_answer(request):
             else:
                 if runtime != current_runtime:
                     os.system("{default_aws_access_config} aws lambda update-function-configuration --function-name lambda_function_{user_id} --runtime {runtime}".format(default_aws_access_config=default_aws_access_config,user_id=user_id,runtime=runtime))
+                    request.user.profile.current_runtime = runtime
+                    request.user.profile.save()                
+
                 ret = system_call("{default_aws_access_config} aws lambda update-function-code --function-name lambda_function_{user_id} --zip-file fileb:///tmp/lambda_function_{user_id}.zip".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
             
 
