@@ -119,7 +119,7 @@ def submit_answer(request):
         config_accesskey = "AKIA5RHXUTZ3V2NAP6GW"
         config_secret = "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"
         config_region = "us-east-2"
-        default_aws_access_config = f"AWS_ACCESS_KEY_ID={config_accesskey} AWS_SECRET_ACCESS_KEY={config_secret} AWS_DEFAULT_REGION={config_region}"
+        default_aws_access_config = "AWS_ACCESS_KEY_ID={config_accesskey} AWS_SECRET_ACCESS_KEY={config_secret} AWS_DEFAULT_REGION={config_region}".format(config_accesskey=config_accesskey,config_secret=config_secret,config_region=config_region)
 
         if os.path.exists("/tmp/lambda_function_" + user_id + ".zip"):
             os.system("rm /tmp/lambda_function_" + user_id + ".zip")
@@ -129,35 +129,35 @@ def submit_answer(request):
             os.system("chmod 0777 /tmp/lambda_function_" + user_id)
         
         content = ""
-        with open(f"/home/ubuntu/challenges/template_challenge_{challenge_id}_{runtime}.{extension}", "r") as rf:
+        with open("/home/ubuntu/challenges/template_challenge_{challenge_id}_{runtime}.{extension}".format(challenge_id=challenge_id,runtime=runtime,extension=extension), "r") as rf:
             content = rf.read().replace("[USER_FUNCTION]", code)
 
-        with open(f"/tmp/lambda_function_{user_id}/lambda_function.{extension}", "w") as wf:
+        with open("/tmp/lambda_function_{user_id}/lambda_function.{extension}".format(user_id=user_id,extension=extension), "w") as wf:
             wf.write(content)
         
         check_parse = check_valid_file(user_id, runtime, extension)
         if len(check_parse) < 5:
-            os.system(f"zip /tmp/lambda_function_{user_id}.zip -j /tmp/lambda_function_{user_id}/lambda_function.{extension}")
+            os.system("zip /tmp/lambda_function_{user_id}.zip -j /tmp/lambda_function_{user_id}/lambda_function.{extension}".format(user_id=user_id,extension=extension))
             
             ret = ""
             if current_runtime == "":
-                ret = system_call(f"{default_aws_access_config} aws lambda create-function --function-name lambda_function_{user_id} --memory-size {config_memory_size} --timeout {config_timeout} --runtime {runtime} --zip-file fileb:///tmp/lambda_function_{user_id}.zip --handler lambda_function.lambda_handler  --role {config_role}")
+                ret = system_call("{default_aws_access_config} aws lambda create-function --function-name lambda_function_{user_id} --memory-size {config_memory_size} --timeout {config_timeout} --runtime {runtime} --zip-file fileb:///tmp/lambda_function_{user_id}.zip --handler lambda_function.lambda_handler  --role {config_role}".format(default_aws_access_config=default_aws_access_config,user_id=user_id,config_memory_size=config_memory_size,config_timeout=config_timeout,runtime=runtime,config_role=config_role))
                 request.user.profile.current_runtime = runtime
                 request.user.profile.save()
             else:
                 if runtime != current_runtime:
-                    os.system(f"{default_aws_access_config} aws lambda update-function-configuration --function-name lambda_function_{user_id} --runtime {runtime}")
-                ret = system_call(f"{default_aws_access_config} aws lambda update-function-code --function-name lambda_function_{user_id} --zip-file fileb:///tmp/lambda_function_{user_id}.zip")
+                    os.system("{default_aws_access_config} aws lambda update-function-configuration --function-name lambda_function_{user_id} --runtime {runtime}".format(default_aws_access_config=default_aws_access_config,user_id=user_id,runtime=runtime))
+                ret = system_call("{default_aws_access_config} aws lambda update-function-code --function-name lambda_function_{user_id} --zip-file fileb:///tmp/lambda_function_{user_id}.zip".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
             
             print(ret)
 
             if "error" in str(ret):
                 return JsonResponse({'errorType': 'InternalError', 'errorMessage': 'Error al ejecutar funcion, intente mas tarde'})
             else:
-                ret = os.system(f"{default_aws_access_config} aws lambda invoke --function-name \"lambda_function_1:\$LATEST\" \"/tmp/out_{user_id}.txt\"")
+                ret = os.system("{default_aws_access_config} aws lambda invoke --function-name \"lambda_function_1:\$LATEST\" \"/tmp/out_{user_id}.txt\"".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
             
                 result = ""
-                with open(f"/tmp/out_{user_id}.txt") as f:
+                with open("/tmp/out_{user_id}.txt".format(user_id=user_id)) as f:
                     result = str(f.read())
 
                 response = json.loads(result)
@@ -183,9 +183,9 @@ def updateAnswer(challenge, valid, user, code, status):
     
 def check_valid_file(user_id, runtime, extension):
     if 'python3' in runtime:
-        return system_call(f"/usr/bin/python3 -m py_compile /tmp/lambda_function_{user_id}/lambda_function.py")
+        return system_call("/usr/bin/python3 -m py_compile /tmp/lambda_function_{user_id}/lambda_function.py".format(user_id=user_id))
     elif 'python' in runtime:
-        return system_call(f"/usr/bin/python -m py_compile /tmp/lambda_function_{user_id}/lambda_function.py")
+        return system_call("/usr/bin/python -m py_compile /tmp/lambda_function_{user_id}/lambda_function.py".format(user_id=user_id))
     else:
         return ""    
 
