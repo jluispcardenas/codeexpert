@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ challenge.title }}</h1>
+          </div>
+
+
+        <div class="row">
+          <div class="col-lg-6 mb-6">
+            <div class="card shadow">
+              
+              <div class="card-body">
+                <div class="text-center">
+                  <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="img/undraw_posting_photo.svg" alt="">
+                </div>
+                <span class="badge badge-primary badge-{{challenge.difficult}}">{{ challenge.difficult }}</span>
+                {% if user.is_authenticated %}
+                <p>{{ challenge.description | safe | linebreaksbr  }}</p>
+                {% else %}
+                  <div><h5><i class="fa fa-lock"></i> <a href="#" data-toggle="modal" data-target="#signModal">Registrate aqu&iacute;</a> para poder acceder a todo el contenido</h5></div>
+                {% endif %}
+              </div>
+              <div class="card-footer">
+                <i class="fa fa-thumbs-up"></i> {% widthratio challenge.accepted 100 challenge.submissions %}% Aceptaci&oacute;n</a>
+              </div>
+            </div>
+
+
+
+          </div>
+
+          <div class="col-md-6">
+
+            <div class="card">
+              <div class="card-body">
+                <select id="runtimeSel" class="form-control mb-2">
+                  <option value="python3.8">Python 3.8</option>
+                  <option value="nodejs12.x">NodeJs 12</option>
+                </select>
+                <div id="editor" style="width: 100%; height:400px;"></div>
+                
+                {% if user.is_authenticated %}
+                  <form id="form_answer">
+                    {% csrf_token %}
+                    <input type="hidden" id="code" name="code" value="" />
+                    <input type="hidden" id="runtime" name="runtime" value="{{ current_runtime }}" />
+                    <input type="hidden" id="challenge_id" name="challenge_id" value="{{ challenge.id }}" />
+                    
+                    {% if not win %}
+                    <button type="submit" class="btn btn-primary mt-2"><div style="display: none;" class="spinner-border"></div><span>Enviar Respuesta</span></button>
+                    {% else %}
+                    <div class="alert alert-success">Reto completado</div>
+                    {% endif %}
+                  </form>
+                  <div id="dv_succ" style="display: none;" class="alert-success p-2 mt-1">
+                    <div class="badge badge-success p-2 mb-2" style="position: inherit;"><i class="fa fa-check"></i> Test passed</div>
+                    <div class="badge badge-success p-2 mb-2" style="position: inherit;"><i class="fa fa-check"></i> Test passed</div>
+                    <div class="badge badge-success p-2 mb-2" style="position: inherit;"><i class="fa fa-check"></i> Test passed</div>
+                    <div class="badge badge-success p-2 mb-2" style="position: inherit;"><i class="fa fa-check"></i> Test passed</div>
+                    <div class="badge badge-success p-2" style="position: inherit;"><i class="fa fa-check"></i> Test passed</div>
+                  </div>
+                  <div id="dv_err" style="display: none;" class="alert-danger p-2 mt-1">
+                    <i class="fa fa-bug"></i> Respuesta incorrecta: <br />
+                    <b>code: <span id="errorType"></span></b><br />
+                    <b>msg: <span id="errorMessage"></span> </b>
+                  </div>
+                  
+                {% endif %}  
+
+              </div>
+            </div>
+           
+            
+
+          </div>
+
+
+
+        </div>
+
+  <!-- Buy Modal-->
+  <div class="modal fade" id="buyModal" tabindex="-1" role="dialog" aria-labelledby="buyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Confirmar</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          
+          <div id="dv_desc">
+            <h5></h5>
+            <div id="form_loading" style="display: none;" class="spinner-border m-5" role="status">
+              <span class="sr-only">Enviando...</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+{% endblock container %}
+
+
+{% block scripts %}
+<script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+
+<script type="text/javascript">
+  require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.8.3/min/vs' }});
+  require(["vs/editor/editor.main"], function () {
+      var r = jQuery("#runtimeSel").val() == null || jQuery("#runtimeSel").val().indexOf("node") == -1 ? "python" : "javascript"
+      editor = monaco.editor.create(document.getElementById('editor'), {
+      value: "{{ template | safe | addslashes  | linebreaksbr }}".split("<br>").join('\n'),
+      language: r,
+      theme: 'vs-dark'
+    });
+  });
+jQuery("#runtimeSel").val("{{ current_runtime }}")
+jQuery("#runtimeSel").change(function() {
+  var r = jQuery(this).val() == null || jQuery(this).val().indexOf("node") == -1 ? "python" : "javascript";
+  window.monaco.editor.setModelLanguage(window.monaco.editor.getModels()[0], r);
+})
+{% if user.is_authenticated %}
+var sendingForm = false;
+jQuery("#form_answer").submit(function(e) {
+  e.preventDefault()
+  e.stopPropagation()
+  if (!sendingForm) {
+    jQuery("#code").val(editor.getValue())
+    jQuery("#runtime").val(jQuery("#runtimeSel").val())
+    sendingForm = true;
+    var form = jQuery(this), btn = form.find("button").attr('disabled', 'disabled')
+    btn.find("span").hide(); btn.find("div").show()
+
+    jQuery.ajax("{% url 'challenges:submit_answer' %}", {
+      dataType: 'json',
+      type: 'POST',
+      data: form.serialize(),
+      success: function(response) {
+        btn.find("div").hide(); btn.find("span").show()
+        btn.removeAttr("disabled")
+        if (response.status && response.status == 200) {
+          btn.remove()
+          jQuery("#dv_err").hide()
+          dvsuc = jQuery("#dv_succ")
+          dvsuc.show();
+        } else if (response.errorType) {
+          var dverr = jQuery("#dv_err")
+          dverr.show();
+          dverr.find("#errorType").html(response.errorType)
+          dverr.find("#errorMessage").html(response.errorMessage)
+        } else {
+          alert("Ocurrió un error, intente más tarde")
+          return;
+        }
+        sendingForm = false;
+      },
+      error: function() {
+        alert('Ocurrio un error, intente más tarde')
+      }
+    })
+  }
+})
+{% endif %}
+</script>
+{% endblock scripts %}

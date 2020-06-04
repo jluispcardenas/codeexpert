@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+        <div class="row"> 
+          
+  <div class="col-lg-12 mb-12">
+  <div class="card shadow mb-4">
+    <div class="card-header">{{ profile.username }}</div>
+    <div class="card-body">
+      <p>{{ profile.first_name }} {{ profile.last_name }}</p>
+      <p>Se uni&oacute; en: {{ profile.date_joined }}</p>  
+    </div>
+    
+  </div>
+</div>
+
+</div>
+
+{% endblock container %}

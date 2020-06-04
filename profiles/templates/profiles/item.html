@@ -1,0 +1,5 @@
+<tr>
+  <td>{% if completed and challenge.id in completed %}<i class="fa fa-check"></i> {% endif %} <a target="_blank" rel="nofollow" href="{% url 'challenges:item' id=challenge.id slug=challenge.slug %}">{{ challenge.title}}</a></td>
+  <td>{% widthratio challenge.accepted challenge.submissions 100  %}%</td>
+  <td><span class="badge badge-primary badge-{{challenge.difficult}}">{{ challenge.difficult }}</span></td>
+</tr>

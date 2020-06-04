@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block container %}
+  <div id="slide" class="">
+    <h1 class="pt-3 ml-3">Code Expert</h1>
+    <p class="ml-3">Entrena algoritmos y mejora tu preparaci&oacute;n<br> para entrevistas de c&oacute;digo.</p>
+  </div>
+
+  {% for cat in categories %}
+    <div class="category-card-base col-sm-2 col-xs-4 "><a href="{% url 'challenges:category' id=cat.id slug=cat.name %}"><div class="close-btn text-black"><i class="fa fa-times-circle" aria-hidden="true"></i></div><div class="card card-{{ cat.name }}"><div class="inner"><div class="text-center title">{{ cat.name }}</div></div></div></a><div class="caret-base hide"><div class="simple-caret"></div></div></div>
+  {% endfor %}
+    <hr />
+
+    <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800"><i class="fa fa-fire" style="color:#e74a3b"></i>  Populares</h1>
+          </div>
+
+
+        <div class="row"> 
+
+          {% if object_list %}
+          <table class="table table-striped table-sm table-hover table-dark table-challenges">
+            <thead>
+              <tr>
+              <th></th>
+              <th>Aceptaci&oacute;n</th>
+              <th>Dificultad</th>
+            </tr>
+            </thead>
+            {% for challenge in object_list %}
+              {% include './item.html' %}
+            {% endfor %}
+          </table>
+
+          {% else %}
+            <h4>No se han encontrado nuevos retos</h4>
+          {% endif %}
+        </div>
+        <hr />
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 class="h3 mb-0 text-gray-800"><i class="fa fa-trophy" style="color:#f6c23e"></i> Últimos Ganadores</h1>
+        </div>
+
+          <!-- Content Row -->
+          <div class="row">
+            {% for winner in winners %}
+              {% include './winner.html' %} 
+            {% endfor %}
+            
+          </div>
+
+{% endblock container %}

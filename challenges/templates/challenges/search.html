@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block container %}
+    {% for cat in categories %}
+    <div class="category-card-base col-sm-2 col-xs-4 "><a href="{% url 'challenges:category' id=cat.id slug=cat.name %}"><div class="close-btn text-black"><i class="fa fa-times-circle" aria-hidden="true"></i></div><div class="card card-{{ cat.name }}"><div class="inner"><div class="text-center title">{{ cat.name }}</div></div></div></a><div class="caret-base hide"><div class="simple-caret"></div></div></div>
+    {% endfor %}
+    <hr />  
+    {% if category %}
+        <h5><i class="fa fa-star" style="color:#f6c23e"></i> {{ category.name }}</h5>
+    {% else %}
+        <h5><i class="fa fa-star" style="color:#f6c23e"></i> Resultados de tu b&uacute;squeda</h5>
+    {% endif %}
+    <table class="table table-striped table-sm table-hover table-dark table-challenges">
+      <thead>
+        <tr>
+        <th></th>
+        <th>Aceptaci&oacute;n</th>
+        <th>Dificultad</th>
+      </tr>
+      </thead>
+            {% for challenge in object_list %}
+                {% include './item.html' %}
+            {% endfor %}
+      </table>
+        {% if is_paginated %}
+            <nav aria-label="Page navigation" class="mt-5 col-md-12">
+              <ul class="pagination list-inline mx-auto justify-content-center">
+                      {% if page_obj.has_previous %}
+                      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+                      {% endif %}
+                      <li class="page-item"> &nbsp; Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} &nbsp; </li>
+                      {% if page_obj.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a class="page-link"></li>
+                      {% endif %}
+              </ul>
+            </nav>
+    {% endif %}
+    </div>
+
+{% endblock container %}

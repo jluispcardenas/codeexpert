@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<form method="POST" action="{% url 'challenges:home' %}" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+  {% csrf_token %}
+  <div class="">
+    <textarea name="code" cols="50" rows="10"></textarea>
+    <input type="submit" value=" Submit " />
+  </div>
+  </div>
+</form>
+
+
+{% endblock container %}

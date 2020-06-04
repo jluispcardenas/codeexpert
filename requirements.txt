@@ -4,6 +4,7 @@ chardet==3.0.4
 Cython==0.28.5
 decorator==4.3.0
 Django==2.1
+django-pylibmc==0.6.1
 Faker==0.9.1
 gunicorn==19.9.0
 idna==2.7
@@ -27,6 +28,7 @@ pytz==2018.5
 requests==2.19.1
 simplegeneric==0.8.1
 six==1.11.0
+social-auth-app-django==3.1.0
 stripe==2.6.0
 text-unidecode==1.2
 traitlets==4.3.2
