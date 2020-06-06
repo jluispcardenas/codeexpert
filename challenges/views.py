@@ -34,7 +34,7 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.order_by('name').all()
-        context['winners'] = Answer.objects.filter(valid=True).select_related().order_by('-pk')[:5]
+        context['winners'] = Answer.objects..select_related('user').filter(valid=True).order_by('-pk')[:5]
         context['completed'] = [] if not self.request.user.is_authenticated else Answer.objects.filter(user=self.request.user, valid=True).values_list('challenge_id', flat=True)
 
         return context
@@ -147,22 +147,25 @@ def submit_answer(request):
             else:
                 if runtime != current_runtime:
                     os.system("{default_aws_access_config} aws lambda update-function-configuration --function-name lambda_function_{user_id} --runtime {runtime}".format(default_aws_access_config=default_aws_access_config,user_id=user_id,runtime=runtime))
+                    request.user.profile.current_runtime = runtime
+                    request.user.profile.save()                
+
                 ret = system_call("{default_aws_access_config} aws lambda update-function-code --function-name lambda_function_{user_id} --zip-file fileb:///tmp/lambda_function_{user_id}.zip".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
             
-            print(ret)
 
             if "error" in str(ret):
-                return JsonResponse({'errorType': 'InternalError', 'errorMessage': 'Error al ejecutar funcion, intente mas tarde'})
+                return JsonResponse({'errorType': 'InternalError', 'errorMessage': 'Error al ejecutar funcion, intente mas tarde'+ret})
             else:
-                ret = os.system("{default_aws_access_config} aws lambda invoke --function-name \"lambda_function_1:\$LATEST\" \"/tmp/out_{user_id}.txt\"".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
+                ret = os.system("{default_aws_access_config} aws lambda invoke --function-name \"lambda_function_{user_id}:\$LATEST\" \"/tmp/out_{user_id}.txt\"".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
             
                 result = ""
-                with open("/tmp/out_{user_id}.txt".format(user_id=user_id)) as f:
+                with open("/tmp/out_{user_id}.txt".format(user_id=user_id), "r") as f:
                     result = str(f.read())
-
+                
                 response = json.loads(result)
-                valid = "errorType" not in response
-                status = "Success" if 'errorType' not in response else response['errorType'] 
+                valid = response and "errorType" not in response
+                status = "Success" if response and 'errorType' not in response else response['errorType'] 
+               
                 updateAnswer(challenge, valid, request.user, code, status)
   
                 return JsonResponse(response)
@@ -206,3 +209,4 @@ def get_extension_by_runtime(runtime):
         return 'java'
     else:
         return False
+
