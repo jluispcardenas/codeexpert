@@ -26,7 +26,7 @@ STATICFILES_DIRS = [
 SECRET_KEY = 'km5o1lyp*dd!*7sf2e9f8gb=#r4*o6yv6y9v^)@@y7jl+9qha!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -99,8 +99,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'algo',
-        'USER': 'youtube',
-        'PASSWORD': 'sistemas',
+        'USER': 'wordpressuser',
+        'PASSWORD': 'Sistemas$19',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -177,8 +177,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '859142736802-fsij2bm9v4an3gqg1lucu8n7kr3nd787.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'Ij2m86HzIzT7y1RlX1QR7rAy'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '344030283653-7m3mrl4oeiup7t4973vm3md2rkdnkldq.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'v53Hh-UqQ71laRjctr3yqI9B'
 
 SOCIAL_AUTH_FACEBOOK_KEY = ''          # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = ''       # App Secret

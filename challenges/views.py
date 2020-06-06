@@ -34,7 +34,7 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.order_by('name').all()
-        context['winners'] = Answer.objects.filter(valid=True).select_related().order_by('-pk')[:5]
+        context['winners'] = Answer.objects.select_related('user').filter(valid=True).order_by('-pk')[:5]
         context['completed'] = [] if not self.request.user.is_authenticated else Answer.objects.filter(user=self.request.user, valid=True).values_list('challenge_id', flat=True)
 
         return context
