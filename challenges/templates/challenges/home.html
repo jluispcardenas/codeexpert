@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block container %}
-{% load cache %}
-{% cache 600 home %}
 
   <div id="slide" class="">
     <h1 class="pt-3 ml-3">Code Expert</h1>
@@ -53,5 +51,5 @@
             {% endfor %}
             
           </div>
-{% endcache %}
+
 {% endblock container %}
