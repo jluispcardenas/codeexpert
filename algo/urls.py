@@ -24,6 +24,8 @@ urlpatterns = [
     path('users/',
         include(('profiles.urls', 'profiles'),
         namespace='profiles')),
+    
+    url(r'sitemap\.xml^$', TemplateView.as_view(template_name='sitemap.xml'), name="sitemap"),
 
     path('', 
         include(('challenges.urls', 'challenges'),
