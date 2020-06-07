@@ -15,15 +15,17 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  
+  {% block metas %}
+  <title>CodeExpert</title>
+  <meta name="description" content="Entrena algoritmos y mejora tu preparación para entrevistas de código.">
+  <meta name="keywords" content="algoritmos,programacion,entrena algoritmos,retos algoritmos, preparación para entrevistas, whiteboard código,retos programacion">
   <meta property="og:url"                content="http://codeexpert.club" />
   <meta property="og:type"               content="article" />
   <meta property="og:title"              content="CodeExpert" />
   <meta property="og:description"        content="Entrena algoritmos y mejora tu preparación para entrevistas de código." />
   <meta property="og:image"              content="http://codeexpert.club/static/img/slide.jpg" />
-
-  <title>CodeExpert</title>
+  {% endblock %}
 
   <!-- Custom fonts for this template-->
   <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
