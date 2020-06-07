@@ -26,7 +26,7 @@ STATICFILES_DIRS = [
 SECRET_KEY = 'km5o1lyp*dd!*7sf2e9f8gb=#r4*o6yv6y9v^)@@y7jl+9qha!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -99,8 +99,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'algo',
-        'USER': 'youtube',
-        'PASSWORD': 'sistemas',
+        'USER': 'wordpressuser',
+        'PASSWORD': 'Sistemas$19',
         'HOST': 'localhost',
         'PORT': '3306',
     }
