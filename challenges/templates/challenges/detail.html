@@ -1,7 +1,16 @@
 {% extends "base.html" %}
+  {% block metas %}
+  <title>{{ challenge.title }} | CodeExpert</title>
+  <meta name="description" content="{{ challenge.description | truncatechars:50 }}">
+  <meta name="keywords" content="algoritmos,programacion,entrena algoritmos,retos algoritmos, preparación para entrevistas, whiteboard código,retos programacion">
+  <meta property="og:url"                content="http://codeexpert.club/{{ challenge.id}}/{{challenge.slug}}" />
+  <meta property="og:type"               content="article" />
+  <meta property="og:title"              content="{{ challenge.title }} | CodeExpert" />
+  <meta property="og:description"        content="Entrena algoritmos y mejora tu preparación para entrevistas de código." />
+  <meta property="og:image"              content="http://codeexpert.club/static/img/slide.jpg" />
+  {% endblock %}
 
 {% block container %}
-
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
