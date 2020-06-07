@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
+{% block metas %}
+  <title>{% if category %}{{ category.name }}{% else %}Resultados de tu b&uacute;squeda{% endif %} | CodeExpert</title>
+  <meta name="description" content="{% if category %}{{ category.name }}{% else %}Resultados de tu b&uacute;squeda{% endif %}">
+  <meta name="keywords" content="algoritmos,programacion,entrena algoritmos,retos algoritmos, preparación para entrevistas, whiteboard código,retos programacion">
+  <meta property="og:url"                content="http://codeexpert.club/{{ challenge.id}}/{{challenge.slug}}" />
+  <meta property="og:type"               content="article" />
+  <meta property="og:title"              content="{% if category %}{{ category.name }}{% else %}Resultados de tu b&uacute;squeda{% endif %} | CodeExpert" />
+  <meta property="og:description"        content="Entrena algoritmos y mejora tu preparación para entrevistas de código." />
+  <meta property="og:image"              content="http://codeexpert.club/static/img/slide.jpg" />
+{% endblock %}
+
 {% block container %}
     {% for cat in categories %}
     <div class="category-card-base col-sm-2 col-xs-4 "><a href="{% url 'challenges:category' id=cat.id slug=cat.name %}"><div class="close-btn text-black"><i class="fa fa-times-circle" aria-hidden="true"></i></div><div class="card card-{{ cat.name }}"><div class="inner"><div class="text-center title">{{ cat.name }}</div></div></div></a><div class="caret-base hide"><div class="simple-caret"></div></div></div>
