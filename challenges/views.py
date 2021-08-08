@@ -30,7 +30,7 @@ class HomeView(ListView):
 
     # filter by actives
     queryset = Challenge.objects.filter(active=True).order_by('-pk')
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.order_by('name').all()
@@ -65,11 +65,11 @@ class SearchView(ListView):
 
     def get_queryset(self):
         challenges = Challenge.objects.order_by('-pk')
-        
+
         cat = self.kwargs['id'] if 'id' in self.kwargs else None
         if not cat:
             cat = self.request.GET.get("cat", None)
-        
+
         if cat:
             challenges = challenges.filter(category=cat)
         q = self.request.GET.get("q", None)
@@ -111,9 +111,9 @@ def submit_answer(request):
             return JsonResponse({'errorType': 'InvalidParameter', 'errorMessage': 'Invalid challenge'})
 
         extension = get_extension_by_runtime(runtime)
-    
+
         # configuration
-        config_memory_size = "128"
+        """config_memory_size = "128"
         config_timeout = "8"
         config_role = "arn:aws:iam::930379767415:role/service-role/test1-role-u851bbd3"
         config_accesskey = "AKIA5RHXUTZ3V2NAP6GW"
@@ -127,20 +127,23 @@ def submit_answer(request):
         if os.path.exists("/tmp/lambda_function_" + user_id):
             os.system("mkdir /tmp/lambda_function_" + user_id)
             os.system("chmod 0777 /tmp/lambda_function_" + user_id)
-        
+        """
         content = ""
         with open("/home/ubuntu/challenges/template_challenge_{challenge_id}_{runtime}.{extension}".format(challenge_id=challenge_id,runtime=runtime,extension=extension), "r") as rf:
             content = rf.read().replace("[USER_FUNCTION]", code)
 
-        with open("/tmp/lambda_function_{user_id}/lambda_function.{extension}".format(user_id=user_id,extension=extension), "w") as wf:
+        #with open("/tmp/lambda_function_{user_id}/lambda_function.{extension}".format(user_id=user_id,extension=extension), "w") as wf:
+        #    wf.write(content)
+        scriptname = "{user_id}_{challenge_id}_lambda_function.{extension}".format(user_id=user_id,challenge_id=challenge_id,extension=extension)
+        with open("/tmp/{scriptname}".format(scriptname=scriptname), "w") as wf:
             wf.write(content)
-        
-        check_parse = check_valid_file(user_id, runtime, extension)
+
+        check_parse = check_valid_file(user_id, challenge_id, runtime, extension)
         if len(check_parse) < 5:
-            os.system("zip /tmp/lambda_function_{user_id}.zip -j /tmp/lambda_function_{user_id}/lambda_function.{extension}".format(user_id=user_id,extension=extension))
-            
+            #os.system("zip /tmp/lambda_function_{user_id}.zip -j /tmp/lambda_function_{user_id}/lambda_function.{extension}".format(user_id=user_id,extension=extension))
+
             ret = ""
-            if current_runtime == "":
+            """if current_runtime == "":
                 ret = system_call("{default_aws_access_config} aws lambda create-function --function-name lambda_function_{user_id} --memory-size {config_memory_size} --timeout {config_timeout} --runtime {runtime} --zip-file fileb:///tmp/lambda_function_{user_id}.zip --handler lambda_function.lambda_handler  --role {config_role}".format(default_aws_access_config=default_aws_access_config,user_id=user_id,config_memory_size=config_memory_size,config_timeout=config_timeout,runtime=runtime,config_role=config_role))
                 request.user.profile.current_runtime = runtime
                 request.user.profile.save()
@@ -148,26 +151,32 @@ def submit_answer(request):
                 if runtime != current_runtime:
                     os.system("{default_aws_access_config} aws lambda update-function-configuration --function-name lambda_function_{user_id} --runtime {runtime}".format(default_aws_access_config=default_aws_access_config,user_id=user_id,runtime=runtime))
                     request.user.profile.current_runtime = runtime
-                    request.user.profile.save()                
+                    request.user.profile.save()
 
                 ret = system_call("{default_aws_access_config} aws lambda update-function-code --function-name lambda_function_{user_id} --zip-file fileb:///tmp/lambda_function_{user_id}.zip".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
-            
+            """
+            os.system("rm /var/scripts/{scriptname} & mv /tmp/{scriptname} /var/scripts/{scriptname}".format(scriptname=scriptname))
+            dockerimages = {"python3.8": "python:3", "node12.x": "node:latest"}
+            commands = {"nodejs12.x": "node", "python3.8": "python3"}
 
-            if "error" in str(ret):
-                return JsonResponse({'errorType': 'InternalError', 'errorMessage': 'Error al ejecutar funcion, intente mas tarde'+ret})
-            else:
-                ret = os.system("{default_aws_access_config} aws lambda invoke --function-name \"lambda_function_{user_id}:\$LATEST\" \"/tmp/out_{user_id}.txt\"".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
-            
-                result = ""
-                with open("/tmp/out_{user_id}.txt".format(user_id=user_id), "r") as f:
-                    result = str(f.read())
-                
+            #if "error" in str(ret):
+            #    return JsonResponse({'errorType': 'InternalError', 'errorMessage': 'Error al ejecutar funcion, intente mas tarde'+ret})
+            #else:
+            #    ret = os.system("{default_aws_access_config} aws lambda invoke --function-name \"lambda_function_{user_id}:\$LATEST\" \"/tmp/out_{user_id}.txt\"".format(default_aws_access_config=default_aws_access_config,user_id=user_id))
+
+            if True:
+                result = system_call("sudo docker run -v /var/scripts:/var/scripts --rm -it {image} {command} /var/scripts/{scriptname}".format(scriptname=scriptname, image=dockerimages[runtime], command=commands[runtime]))
+
+                #result =
+                #with open("/tmp/out_{user_id}.txt".format(user_id=user_id), "r") as f:
+                #    result = str(f.read())
+                #
                 response = json.loads(result)
                 valid = response and "errorType" not in response
-                status = "Success" if response and 'errorType' not in response else response['errorType'] 
-               
+                status = "Success" if response and 'errorType' not in response else response['errorType']
+
                 updateAnswer(challenge, valid, request.user, code, status)
-  
+
                 return JsonResponse(response)
         else:
             updateAnswer(challenge, False, request.user, code, "ParseError")
@@ -180,21 +189,23 @@ def updateAnswer(challenge, valid, user, code, status):
     if valid:
         challenge.accepted = challenge.accepted + 1
         user.profile.accepted = user.profile.accepted + 1
-    
+
     user.profile.save()
     challenge.save()
-    
-def check_valid_file(user_id, runtime, extension):
+
+def check_valid_file(user_id, challenge_id, runtime, extension):
     if 'python3' in runtime:
-        return system_call("/usr/bin/python3 -m py_compile /tmp/lambda_function_{user_id}/lambda_function.py".format(user_id=user_id))
+        #return system_call("/usr/bin/python3 -m py_compile /tmp/lambda_function_{user_id}/{challenge_id}_lambda_function.py".format(user_id=user_id,challenge_id=challenge_id))
+        return system_call("/usr/bin/python3 -m py_compile /tmp/{user_id}_{challenge_id}_lambda_function.py".format(user_id=user_id,challenge_id=challenge_id))
     elif 'python' in runtime:
-        return system_call("/usr/bin/python -m py_compile /tmp/lambda_function_{user_id}/lambda_function.py".format(user_id=user_id))
+        #return system_call("/usr/bin/python -m py_compile /tmp/lambda_function_{user_id}/{challenge_id}_lambda_function.py".format(user_id=user_id,challenge_id=challenge_id))
+        return system_call("/usr/bin/python -m py_compile /tmp/{user_id}_{challenge_id}_lambda_function.py".format(user_id=user_id,challenge_id=challenge_id))
     else:
-        return ""    
+        return ""
 
 def system_call(command):
     try:
-        return str(subprocess.check_output([command], shell=True, stderr=subprocess.STDOUT))
+        return str(subprocess.check_output([command], shell=True, stderr=subprocess.STDOUT).decode(sys.stdout.encoding)).strip()
     except subprocess.CalledProcessError as e:
         return str(e.output)
 
@@ -209,4 +220,3 @@ def get_extension_by_runtime(runtime):
         return 'java'
     else:
         return False
-

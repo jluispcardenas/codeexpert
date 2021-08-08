@@ -2,7 +2,7 @@ version: "3"
 services:
   web:
     image: nginx
-    container_name: nginx_server_youtube_clone
+    container_name: nginx_server_codeexpert
     volumes:
       - ./djangoapp.template:/etc/nginx/conf.d/djangoapp.template
       - ./certs:/etc/nginx/certs
@@ -13,19 +13,19 @@ services:
     links:
       - django
     environment:
-    - NGINX_HOST=platzitest.dev
+    - NGINX_HOST=codeexpert.dev
     - NGINX_PORT=80
     command : /bin/bash -c "envsubst < /etc/nginx/conf.d/djangoapp.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
   django:
-    container_name: django_server_youtube_clone
+    container_name: django_server_codeexpert
     build:
       context: .
       dockerfile: Dockerfile
-    image: docker_tutorial_django
+    image: docker_django
     stdin_open: true
     tty: true
     volumes:
-      - .:/var/www/youtube_clone
+      - .:/var/www/codeexpert
     ports:
       - "8000:8000"
     expose:
@@ -33,17 +33,17 @@ services:
     links:
       - db
     environment:
-      - DATABASE_URL=mysql://root:123456@db:3306/youtube_clone
+      - DATABASE_URL=mysql://root:123456@db:3306/codeexpert
     depends_on:
       - db
   db:
-    container_name: mysql_django_youtube_clone
+    container_name: mysql_django_codeexpert
     image: mysql/mysql-server:5.7
     ports:
       - "3306:3306"
     expose:
       - '3306'
     environment:
-      - MYSQL_ROOT_PASSWORD=laclave
+      - MYSQL_ROOT_PASSWORD=sistemas
       - MYSQL_ROOT_HOST=%
-      - MYSQL_DATABASE=youtube_clone
+      - MYSQL_DATABASE=codeexpert

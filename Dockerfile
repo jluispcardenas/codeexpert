@@ -15,7 +15,7 @@ RUN apt-get install -y \
     net-tools \
     vim
 # Project Files and Settings
-ARG PROJECT=youtube_clone
+ARG PROJECT=codeexpert
 ARG PROJECT_DIR=/var/www/${PROJECT}
 RUN mkdir -p $PROJECT_DIR
 WORKDIR $PROJECT_DIR
