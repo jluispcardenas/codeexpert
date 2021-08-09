@@ -8,6 +8,7 @@ services:
     volumes:
       - /home/codeexpert:/home/codeexpert
       - /home/ubuntu/challenges:/home/ubuntu/challenges
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
     - "800:80"
     environment:
