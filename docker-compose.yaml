@@ -1,49 +1,16 @@
 version: "3"
 services:
   web:
-    image: nginx
-    container_name: nginx_server_codeexpert
+    image: python:3
+    build: .
+    environment: PYTHONUNBUFFERED=1
+    container_name: web_codeexpert
     volumes:
-      - ./djangoapp.template:/etc/nginx/conf.d/djangoapp.template
-      - ./certs:/etc/nginx/certs
-      - ./a.html:/var/www/html/index.html
+      - /home/codeexpert:/home/codeexpert
+      - /home/ubuntu/challenges:/home/ubuntu/challenges
     ports:
-    - "80:80"
-    - "443:443"
-    links:
-      - django
+    - "800:80"
     environment:
     - NGINX_HOST=codeexpert.dev
     - NGINX_PORT=80
-    command : /bin/bash -c "envsubst < /etc/nginx/conf.d/djangoapp.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
-  django:
-    container_name: django_server_codeexpert
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: docker_django
-    stdin_open: true
-    tty: true
-    volumes:
-      - .:/var/www/codeexpert
-    ports:
-      - "8000:8000"
-    expose:
-      - "8000"
-    links:
-      - db
-    environment:
-      - DATABASE_URL=mysql://root:123456@db:3306/codeexpert
-    depends_on:
-      - db
-  db:
-    container_name: mysql_django_codeexpert
-    image: mysql/mysql-server:5.7
-    ports:
-      - "3306:3306"
-    expose:
-      - '3306'
-    environment:
-      - MYSQL_ROOT_PASSWORD=sistemas
-      - MYSQL_ROOT_HOST=%
-      - MYSQL_DATABASE=codeexpert
+

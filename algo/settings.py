@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import pymysql
+
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,7 +62,6 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.google.GoogleOAuth',
     'social_core.backends.twitter.TwitterOAuth',
@@ -102,8 +104,8 @@ DATABASES = {
         'NAME': 'algo',
         'USER': 'wordpressuser',
         'PASSWORD': 'Sistemas$19',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'HOST': '172.17.0.1', # 'localhost',
+        'PORT': '3306'
     }
 }
 
@@ -194,9 +196,9 @@ SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [                 # add this
     ('link', 'profile_url'),
 ]
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-        'LOCATION': '127.0.0.1:11211',
-    }
-}
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+#        'LOCATION': '172.17.0.1:11211',
+#    }
+#}
