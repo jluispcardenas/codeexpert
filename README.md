@@ -1,4 +1,4 @@
-## Django App to solve algorithm problems
+## Django App to solve algorithm problems (similar to Leetcode)
 
 ![](ss.png)
 
@@ -14,7 +14,7 @@ docker-compose up
 ## What can you find in this app?
 
 
-This project uses Docker-compose to start 5 containers:
+This project uses Docker-compose to start 3 containers:
 
 * Django-App
 * MySQL
