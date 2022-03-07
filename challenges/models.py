@@ -19,16 +19,16 @@ class Challenge(models.Model):
     difficult = models.CharField(max_length=10, default="easy")
     submissions = models.IntegerField(null=True, default=0)
     accepted = models.IntegerField(null=True, default=0)
-    
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     answers = models.ManyToManyField(
-        User, 
+        User,
         through='Answer',
         related_name='challenges_answers'
     )

@@ -22,7 +22,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
+.bash_history
+.mysql_history
+volumes
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -64,7 +66,7 @@ htmlcov/
 .tox/
 .coverage
 .cache
-nosetests.xmla  
+nosetests.xmla
 coverage.xml
 
 # Translations

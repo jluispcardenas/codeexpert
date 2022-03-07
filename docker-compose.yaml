@@ -1,17 +1,43 @@
 version: "3"
 services:
-  web:
-    image: python:3
-    build: .
-    environment: PYTHONUNBUFFERED=1
-    container_name: web_codeexpert
+  codeexpert-django:
+    image: codeexpert_django
+    build:
+      context: .
+      dockerfile: ./compose/django/Dockerfile
+    env_file:
+      - ./environments/development.env
+    container_name: codeexpert-django
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    links:
+      - "codeexpert-mysql:mysql_db"
+      - "codeexpert-redis:redis_db"
+    depends_on:
+      - codeexpert-mysql
+      #- codeexpert_redis
     volumes:
-      - /home/codeexpert:/home/codeexpert
-      - /home/ubuntu/challenges:/home/ubuntu/challenges
+      - .:/home/codeexpert
+      - ./challenges:/home/ubuntu/challenges
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-    - "800:80"
-    environment:
-    - NGINX_HOST=codeexpert.dev
-    - NGINX_PORT=80
+    - "8000:8000"
+    command: /start.sh
 
+  codeexpert-mysql:
+    image: mysql:5.7
+    restart: always
+    container_name: codeexpert-mysql
+    env_file:
+      - ./environments/development.env
+    ports:
+      - '33306:3306'
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+
+  codeexpert-redis:
+    image: redis:4.0.9
+    container_name: codeexpert-redis
+    ports:
+      - "6370:6379"

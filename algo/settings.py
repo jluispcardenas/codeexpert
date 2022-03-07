@@ -29,14 +29,14 @@ STATICFILES_DIRS = [
 SECRET_KEY = 'km5o1lyp*dd!*7sf2e9f8gb=#r4*o6yv6y9v^)@@y7jl+9qha!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
-INSTALLED_APPS = [
+BASE_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,12 +44,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
+]
 
+PROJECT_APPS = [
     'profiles',
     'challenges',
     'social_django',
-
 ]
+
+INSTALLED_APPS = BASE_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,11 +104,11 @@ WSGI_APPLICATION = 'algo.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'algo',
-        'USER': 'wordpressuser',
-        'PASSWORD': 'Sistemas$19',
-        'HOST': '172.17.0.1', # 'localhost',
-        'PORT': '3306'
+        'NAME': os.environ.get('MYSQL_DATABASE'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'HOST': os.environ.get('MYSQL_LOCAL_HOST'),
+        'PORT': os.environ.get('MYSQL_PORT')
     }
 }
 
@@ -180,8 +183,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '344030283653-7m3mrl4oeiup7t4973vm3md2rkdnkldq.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'v53Hh-UqQ71laRjctr3yqI9B'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
 SOCIAL_AUTH_FACEBOOK_KEY = ''          # App ID
 SOCIAL_AUTH_FACEBOOK_SECRET = ''       # App Secret
@@ -195,10 +198,3 @@ SOCIAL_AUTH_FACEBOOK_EXTRA_DATA = [                 # add this
     ('picture', 'picture'),
     ('link', 'profile_url'),
 ]
-
-#CACHES = {
-#    'default': {
-#        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-#        'LOCATION': '172.17.0.1:11211',
-#    }
-#}
